@@ -92,6 +92,22 @@ import "./polyfills"
  * Functions - @todo refactor
  * ------------------------------------------------------------------------- */
 
+function getFromSessionStorage(key: string): Observable<string> {
+  return new Observable<string>((observer) => {
+    try {
+      const value = sessionStorage.getItem(key);
+      if (value === null) {
+        observer.error(new Error('Key not found in sessionStorage'));
+      } else {
+        observer.next(value);
+        observer.complete();
+      }
+    } catch (error) {
+      observer.error(error);
+    }
+  });
+}
+
 /**
  * Fetch search index
  *
@@ -99,21 +115,19 @@ import "./polyfills"
  */
 function fetchSearchIndex(): Observable<SearchIndex> {
   const storedSearchIndex = sessionStorage.getItem('decrypted-search-index');
-  console.log("Debug here!");
-  console.log(of(JSON.parse(storedSearchIndex) as SearchIndex));
-  console.log("Debug here 2!");
-  console.log(requestJSON<SearchIndex>(
-    new URL("search/search_index.json", config.base)
-  ));
-  // if (storedSearchIndex) {
-  //   return of(JSON.parse(storedSearchIndex) as SearchIndex);
-  // } else {
+  if (storedSearchIndex) {
+    // return of(JSON.parse(storedSearchIndex) as SearchIndex);
+    return getFromSessionStorage('decrypted-search-index')
+      .pipe(
+        switchMap(x => JSON.parse(x)),
+        shareReplay(1)
+      )
+  } else {
     if (location.protocol === "file:") {
       return watchScript(
         `${new URL("search/search_index.js", config.base)}`
       )
         .pipe(
-          // @ts-ignore - @todo fix typings
           map(() => __index),
           shareReplay(1)
         )
@@ -122,7 +136,7 @@ function fetchSearchIndex(): Observable<SearchIndex> {
         new URL("search/search_index.json", config.base)
       )
     }
-  // }
+  }
 }
 
 /* ----------------------------------------------------------------------------
