@@ -98,7 +98,7 @@ import "./polyfills"
  */
 function fetchSearchIndex(): Observable<SearchIndex> {
   // Check if the data is available in sessionStorage
-  const sessionStorageData = sessionStorage.getItem('searchIndexData');
+  const sessionStorageData = sessionStorage.getItem('decrypted-search-index');
 
   if (sessionStorageData) {
     try {
