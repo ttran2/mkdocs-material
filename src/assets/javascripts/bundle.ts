@@ -119,7 +119,7 @@ function fetchSearchIndex(): Observable<SearchIndex> {
     // return of(JSON.parse(storedSearchIndex) as SearchIndex);
     return getFromSessionStorage('decrypted-search-index')
       .pipe(
-        switchMap(x => JSON.parse(x)),
+        map(x => JSON.parse(x)),
         shareReplay(1)
       )
   } else {
