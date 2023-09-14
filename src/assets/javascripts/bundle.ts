@@ -26,7 +26,6 @@ import {
   EMPTY,
   NEVER,
   Observable,
-  of,
   Subject,
   defer,
   delay,
@@ -100,7 +99,14 @@ import "./polyfills"
 function fetchSearchIndex(): Observable<SearchIndex> {
   const storedSearchIndex = sessionStorage.getItem('decrypted-search-index');
   if (storedSearchIndex) {
-    return of(JSON.parse(storedSearchIndex) as SearchIndex);
+    // return of(JSON.parse(storedSearchIndex) as SearchIndex);
+      return watchScript(
+        `${new URL("search/search_index.json", config.base)}`
+      )
+        .pipe(
+          map(() => storedSearchIndex),
+          shareReplay(1)
+        )
   } else {
     if (location.protocol === "file:") {
       return watchScript(
