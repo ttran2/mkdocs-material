@@ -97,19 +97,19 @@ import "./polyfills"
  * @returns Search index observable
  */
 function fetchSearchIndex(): Observable<SearchIndex> {
-  // Check if the data is available in sessionStorage
-  const sessionStorageData = sessionStorage.getItem('decrypted-search-index');
-
-  if (sessionStorageData) {
-    try {
-      const searchIndexData = JSON.parse(sessionStorageData);
-      // Return the data from sessionStorage as an observable
-      return of(searchIndexData);
-    } catch (error) {
-      // Handle parsing error if necessary
-      console.error('Error parsing search index data from sessionStorage:', error);
-    }
-  }
+  // // Check if the data is available in sessionStorage
+  // const sessionStorageData = sessionStorage.getItem('decrypted-search-index');
+  //
+  // if (sessionStorageData) {
+  //   try {
+  //     const searchIndexData = JSON.parse(sessionStorageData);
+  //     // Return the data from sessionStorage as an observable
+  //     return of(searchIndexData);
+  //   } catch (error) {
+  //     // Handle parsing error if necessary
+  //     console.error('Error parsing search index data from sessionStorage:', error);
+  //   }
+  // }
 
   // Fallback to the original logic to make an HTTP request
   if (location.protocol === "file:") {
