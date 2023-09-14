@@ -66,4 +66,4 @@ class OfflinePlugin(BasePlugin[OfflineConfig]):
         # Inline search index contents into script
         file = os.path.join(path, "search_index.js")
         with open(file, "w", encoding = "utf-8") as f:
-            f.write(f"var __index = {data}")
+            f.write(f"var __index = sessionStorage.getItem('decrypted-search-index')")
