@@ -99,11 +99,15 @@ import "./polyfills"
  */
 function fetchSearchIndex(): Observable<SearchIndex> {
   const storedSearchIndex = sessionStorage.getItem('decrypted-search-index');
-  if (storedSearchIndex) {
-    console.log("Debug here!")
-    console.log(of(JSON.parse(storedSearchIndex) as SearchIndex))
-    return of(JSON.parse(storedSearchIndex) as SearchIndex);
-  } else {
+  console.log("Debug here!");
+  console.log(of(JSON.parse(storedSearchIndex) as SearchIndex));
+  console.log("Debug here 2!");
+  console.log(requestJSON<SearchIndex>(
+    new URL("search/search_index.json", config.base)
+  ));
+  // if (storedSearchIndex) {
+  //   return of(JSON.parse(storedSearchIndex) as SearchIndex);
+  // } else {
     if (location.protocol === "file:") {
       return watchScript(
         `${new URL("search/search_index.js", config.base)}`
@@ -118,7 +122,7 @@ function fetchSearchIndex(): Observable<SearchIndex> {
         new URL("search/search_index.json", config.base)
       )
     }
-  }
+  // }
 }
 
 /* ----------------------------------------------------------------------------
