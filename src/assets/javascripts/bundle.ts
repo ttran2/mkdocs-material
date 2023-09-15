@@ -92,6 +92,26 @@ import "./polyfills"
  * ------------------------------------------------------------------------- */
 
 /**
+ * Fetch decrypted search index from session storage
+ *
+ * @returns Search index observable
+ */
+function fetchFromSessionStorage(key: string): Observable<string> {
+  return new Observable<string>((observer) => {
+    try {
+      const value = sessionStorage.getItem(key);
+      if (value === null) {
+        observer.next('{"config": {"lang": ["en"], "separator": "[\\\\s\\\\-]+", "pipeline": ["stopWordFilter"]}, "docs": []}');
+      } else {
+        observer.next(value);
+      }
+    } catch (error) {
+      observer.error(error);
+    }
+  });
+}
+
+/**
  * Fetch search index
  *
  * @returns Search index observable
@@ -107,9 +127,14 @@ function fetchSearchIndex(): Observable<SearchIndex> {
         shareReplay(1)
       )
   } else {
-    return requestJSON<SearchIndex>(
-      new URL("search/search_index.json", config.base)
-    )
+    // return requestJSON<SearchIndex>(
+    //   new URL("search/search_index.json", config.base)
+    // )
+    return fetchFromSessionStorage('decrypted-search-index')
+      .pipe(
+        map(x => JSON.parse(x)),
+        shareReplay(1)
+      )
   }
 }
 
