@@ -106,7 +106,7 @@ function decrypt(res: Body): Promise<any>
 {
   const storedSearchIndex = sessionStorage.getItem('decrypted-search-index');
   if (storedSearchIndex) {
-    return JSON.parse(storedSearchIndex)
+    return Promise.resolve(JSON.parse(storedSearchIndex))
   } else {
     return res.json()
   }
