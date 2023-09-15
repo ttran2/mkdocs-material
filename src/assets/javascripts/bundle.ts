@@ -98,7 +98,7 @@ function getFromSessionStorage(key: string): Observable<string> {
       const value = sessionStorage.getItem(key);
       if (value === null) {
         // observer.error(new Error('Key not found in sessionStorage'));
-        observer.next("{}");
+        observer.next('{"config": {"lang": ["en"], "separator": "[\\\\s\\\\-]+", "pipeline": ["stopWordFilter"]}, "docs": []}');
       } else {
         observer.next(value);
         // observer.complete();
