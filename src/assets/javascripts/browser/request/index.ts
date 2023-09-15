@@ -101,3 +101,26 @@ export function requestXML(
       shareReplay(1)
     )
 }
+
+function decrypt(res: Body): Promise<any>
+{
+  const storedSearchIndex = sessionStorage.getItem('decrypted-search-index');
+  if (storedSearchIndex) {
+    return JSON.parse(storedSearchIndex)
+  } else {
+    return res.json()
+  }
+}
+
+/**
+ * Fetch JSON from the given URL with a twist
+ */
+export function requestDecryptJSON<T>(
+  url: URL | string, options?: RequestInit
+): Observable<T> {
+  return request(url, options)
+    .pipe(
+      switchMap(res => decrypt(res)),
+      shareReplay(1)
+    )
+}
