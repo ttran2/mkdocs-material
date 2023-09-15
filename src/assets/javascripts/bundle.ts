@@ -44,7 +44,6 @@ import {
   getActiveElement,
   getOptionalElement,
   requestJSON,
-  requestDecryptJSON,
   setLocation,
   setToggle,
   watchDocument,
@@ -93,12 +92,30 @@ import "./polyfills"
  * Functions - @todo refactor
  * ------------------------------------------------------------------------- */
 
+function getFromSessionStorage(key: string): Observable<string> {
+  return new Observable<string>((observer) => {
+    try {
+      const value = sessionStorage.getItem(key);
+      if (value === null) {
+        // observer.error(new Error('Key not found in sessionStorage'));
+        observer.next("{}");
+      } else {
+        observer.next(value);
+        // observer.complete();
+      }
+    } catch (error) {
+      observer.error(error);
+    }
+  });
+}
+
 /**
  * Fetch search index
  *
  * @returns Search index observable
  */
 function fetchSearchIndex(): Observable<SearchIndex> {
+  const storedSearchIndex = sessionStorage.getItem('decrypted-search-index');
   if (location.protocol === "file:") {
     return watchScript(
       `${new URL("search/search_index.js", config.base)}`
@@ -108,9 +125,14 @@ function fetchSearchIndex(): Observable<SearchIndex> {
         shareReplay(1)
       )
   } else {
-    return requestDecryptJSON<SearchIndex>(
-      new URL("search/search_index.json", config.base)
-    )
+    // return requestJSON<SearchIndex>(
+    //   new URL("search/search_index.json", config.base)
+    // )
+    return getFromSessionStorage('decrypted-search-index')
+      .pipe(
+        map(x => JSON.parse(x)),
+        shareReplay(1)
+      )
   }
 }
 
